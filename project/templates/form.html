@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="explain">
+    <p>
+        左には使用した際に肌が荒れてしまった化粧品の成分を入力してください。<br>
+        右には使用した際に肌が荒れなかった化粧品の成分を入力してください。<br>
+        下にある「比較」ボタンを押すと結果が表示されます。<br>
+    </p>
+</div>
+
+<div class="move">
+    <form action="/form" method="post">
+        <div class="mb-3 form">
+            <p>自分の肌に合わなかった化粧品の成分</p>
+            <textarea id="bad" name="bad" rows="5" cols="40" placeholder="合っていなかった"></textarea >
+        </div>
+        <button class="btn btn-primary" type="submit">比較</button>
+        <div class="mb-3 form">
+            <p>自分の肌に合った化粧品の成分</p>
+            <textarea id="good" name="good" rows="5" cols="40" placeholder="合っていた"></textarea >
+        </div>
+    </form>
+</div>
+
+{% endblock %}

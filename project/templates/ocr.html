@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="explain">
+    <p>2つの成分表示の画像からあなたの肌に合わない成分を推測します。<br>
+        左には使用した際に肌が荒れてしまった化粧品の成分の画像を入れてください。<br>
+        右には使用した際に肌が荒れなかった化粧品の成分の画像を入れてください。<br>
+    </p>
+</div>
+
+<div class="move">
+    <form action="/image" method="post" enctype="multipart/form-data" >
+        <div>
+            <p>自分の肌に合わなかった化粧品の成分</p>
+            <input type="file" name="ocr_bad">
+        </div>
+        <div>
+            <p>自分の肌に合った化粧品の成分</p>
+            <input type="file" name="ocr_good">
+        </div>
+        <div>
+          <input type="submit" value="送信する">
+        </div>
+      </form>
+</div>
+
+{% endblock %}

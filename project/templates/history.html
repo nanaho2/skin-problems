@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div>
+    <table class="table move">
+        <thead>
+            <tr>
+                <th>date</th>
+                <th>bad</th>
+                <th>good</th>
+                <th>result</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in datas %}
+            <tr>
+                <td>{{ data["date"] }}</td>
+                <td>{{ data["bad"] }}</td>
+                <td>{{ data["good"] }}</td>
+                <td>{{ data["result"] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+</table>
+
+</div>
+{% endblock %}

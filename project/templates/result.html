@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="move">
+    <h1>結果</h1>
+    <h4>荒れた原因だと思われる成分</h4>
+    <br>
+    {% for result in results: %}
+    <p>{{ result }}</p>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

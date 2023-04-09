@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, session
 import re
 from PIL import Image
 import pyocr
-from cs50 import SQL
+import sqlite3
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
@@ -15,7 +15,6 @@ from helpers import login_required
 
 
 app = Flask(__name__)
-db = SQL("sqlite:///cause.db")
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
@@ -34,6 +33,13 @@ app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
 # ファイルの保存場所を指定
 UPLOAD_DIR = os.getenv("/workspaces/106944027/FP/uploadfiles/")
+
+# 取り出したSQliteデータを辞書型に変換
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 
 @app.route("/", methods=["GET"])
 @login_required
@@ -63,7 +69,13 @@ def form():
 
         results = set(bad) - set(good)
 
-        db.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", session["user_id"], bad, good, results)
+        # データベースに接続
+        conn = sqlite3.connect("cause.db")
+        conn.row_factory = dict_factory
+        cur = conn.cursor()
+
+        cur.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", session["user_id"], bad, good, results)
+        conn.close()
 
         return render_template("result.html", results = results)
 
@@ -113,8 +125,14 @@ def image():
         results_list = list(results)
         results_str = "".join(results_list)
 
-        db.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", session["user_id"], bad_str, good_str, results_str)
+        # データベースに接続
+        conn = sqlite3.connect("health.db")
+        conn.row_factory = dict_factory
+        cur = conn.cursor()
 
+        cur.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", session["user_id"], bad_str, good_str, results_str)
+
+        conn.close()
         return render_template("result.html", results = results, bad = bad_str, good = good_str)
 
     else:
@@ -134,8 +152,11 @@ def register():
 
         elif not request.form.get("confirmation"):
             return render_template("apology.html", error = "確認用パスワードを入力してください")
-
-        rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
+        
+        conn = sqlite3.connect("cause.db")
+        conn.row_factory = dict_factory
+        cur = conn.cursor()
+        rows = cur.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
 
         if len(rows) == 1:
             return render_template("apology.html", error = "入力されたユーザーネームはすでに使用されています")
@@ -145,8 +166,8 @@ def register():
 
         hash_pass = generate_password_hash(request.form.get("password"))
 
-        db.execute("insert into users(username, password_hash) values(?, ?);", (request.form.get("username")), hash_pass)
-
+        cur.execute("insert into users(username, password_hash) values(?, ?);", (request.form.get("username")), hash_pass)
+        conn.close()
         return redirect("/login")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -162,8 +183,12 @@ def login():
 
         elif not request.form.get("password"):
             return render_template("apology.html", error = "パスワードを入力してください")
-
-        rows = db.execute("SELECT * FROM users WHERE username = ?;", request.form.get("username"))
+        
+        conn = sqlite3.connect("cause.db")
+        conn.row_factory = dict_factory
+        cur = conn.cursor()
+        rows = cur.execute("SELECT * FROM users WHERE username = ?;", request.form.get("username"))
+        conn.close()
 
         if len(rows) != 1:
             return render_template("apology.html", error = "入力されたユーザーネームは登録されていません")
@@ -184,5 +209,9 @@ def logout():
 @login_required
 def history():
     if request.method == "GET":
-        data = db.execute("SELECT date, bad, good, result FROM history WHERE user_id = ?;", session["user_id"])
+        conn = sqlite3.connect("cause.db")
+        conn.row_factory = dict_factory
+        cur = conn.cursor()
+        data = cur.execute("SELECT date, bad, good, result FROM history WHERE user_id = ?;", session["user_id"])
+        conn.close()
         return render_template("history.html", datas = data)

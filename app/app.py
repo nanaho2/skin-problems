@@ -10,6 +10,7 @@ import os
 from werkzeug.utils import secure_filename
 import werkzeug
 from datetime import datetime
+import sys
 
 from helpers import login_required
 
@@ -22,17 +23,17 @@ Session(app)
 
 
 # OCRエンジンを取得
-path_tesseract = "/usr/share/doc/Tesseract-ocr"
-if path_tesseract not in os.environ["PATH"].split(os.pathsep):
-    os.environ["PATH"] += os.pathsep + path_tesseract
 tools = pyocr.get_available_tools()
+if len(tools) == 0:
+    print("No OCR tool found")
+    sys.exit(1)
 tool = tools[0]
 
 # 受け取るデータサイズを1MBに制限
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
 
 # ファイルの保存場所を指定
-UPLOAD_DIR = os.getenv("/workspaces/106944027/FP/uploadfiles/")
+UPLOAD_DIR = os.getenv("./uploadfiles/")
 
 # 取り出したSQliteデータを辞書型に変換
 def dict_factory(cursor, row):

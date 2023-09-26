@@ -1,0 +1,5 @@
+version: '3'
+services:
+  myapp:
+    image: tesseract:python-ocr
+    tty: true 

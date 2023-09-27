@@ -23,11 +23,11 @@ Session(app)
 
 
 # OCRエンジンを取得
-tools = pyocr.get_available_tools()
+"""tools = pyocr.get_available_tools()
 if len(tools) == 0:
     print("No OCR tool found")
     sys.exit(1)
-tool = tools[0]
+tool = tools[0]"""
 
 # 受け取るデータサイズを1MBに制限
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024

@@ -1,9 +1,9 @@
 FROM python:alpine
 
-WORKDIR /app
+WORKDIR /
 ENV FLASK_RUN_HOST=0.0.0.0
 
-COPY ./app /app
+COPY ./ /
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt

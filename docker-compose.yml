@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  python3:
+    restart: always
+    build: .
+    container_name: 'python3'
+    working_dir: '/'
+    tty: true
+    environment:
+      FLASK_APP: "app/app.py"
+      FLASK_ENV: "development"
+    ports:
+      - "8000:5000"

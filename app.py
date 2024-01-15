@@ -23,11 +23,11 @@ Session(app)
 
 
 # OCRエンジンを取得
-"""tools = pyocr.get_available_tools()
+tools = pyocr.get_available_tools()
 if len(tools) == 0:
     print("No OCR tool found")
     sys.exit(1)
-tool = tools[0]"""
+tool = tools[0]
 
 # 受け取るデータサイズを1MBに制限
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024
@@ -157,7 +157,8 @@ def register():
         conn = sqlite3.connect("cause.db")
         conn.row_factory = dict_factory
         cur = conn.cursor()
-        rows = cur.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
+        cur.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
+        rows = cur.fetchall()
 
         if len(rows) == 1:
             return render_template("apology.html", error = "入力されたユーザーネームはすでに使用されています")
@@ -189,6 +190,7 @@ def login():
         conn.row_factory = dict_factory
         cur = conn.cursor()
         rows = cur.execute("SELECT * FROM users WHERE username = ?;", request.form.get("username"))
+        rows = cur.fetchall()
         conn.close()
 
         if len(rows) != 1:

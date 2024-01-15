@@ -76,6 +76,7 @@ def form():
         cur = conn.cursor()
 
         cur.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", (session["user_id"], bad, good, results,))
+        conn.commit()
         conn.close()
 
         return render_template("result.html", results = results)
@@ -133,6 +134,7 @@ def image():
 
         cur.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", (session["user_id"], bad_str, good_str, results_str,))
 
+        conn.commit()
         conn.close()
         return render_template("result.html", results = results, bad = bad_str, good = good_str)
 
@@ -169,6 +171,7 @@ def register():
         hash_pass = generate_password_hash(request.form.get("password"))
 
         cur.execute("insert into users(username, password_hash) values(?, ?);", ((request.form.get("username")), hash_pass,))
+        conn.commit()
         conn.close()
         return redirect("/login")
 

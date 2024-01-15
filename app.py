@@ -157,7 +157,7 @@ def register():
         conn = sqlite3.connect("cause.db")
         conn.row_factory = dict_factory
         cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
+        cur.execute("SELECT * FROM users WHERE username = ?", (request.form.get("username"),))
         rows = cur.fetchall()
 
         if len(rows) == 1:

@@ -164,8 +164,10 @@ def register():
 
         if len(rows) == 1:
             return render_template("apology.html", error = "入力されたユーザーネームはすでに使用されています")
-
-        if not (request.form.get("password") == request.form.get("confirmation")):
+        
+        password = request.form.get("password")
+        confirmation = request.form.get("confirmation")
+        if password != confirmation:
             render_template("apology.html", error = "パスワードが一致しません")
 
         hash_pass = generate_password_hash(request.form.get("password"))

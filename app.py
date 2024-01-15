@@ -75,7 +75,7 @@ def form():
         conn.row_factory = dict_factory
         cur = conn.cursor()
 
-        cur.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", session["user_id"], bad, good, results)
+        cur.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", (session["user_id"], bad, good, results,))
         conn.close()
 
         return render_template("result.html", results = results)
@@ -131,7 +131,7 @@ def image():
         conn.row_factory = dict_factory
         cur = conn.cursor()
 
-        cur.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", session["user_id"], bad_str, good_str, results_str)
+        cur.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", (session["user_id"], bad_str, good_str, results_str,))
 
         conn.close()
         return render_template("result.html", results = results, bad = bad_str, good = good_str)
@@ -168,7 +168,7 @@ def register():
 
         hash_pass = generate_password_hash(request.form.get("password"))
 
-        cur.execute("insert into users(username, password_hash) values(?, ?);", (request.form.get("username")), hash_pass)
+        cur.execute("insert into users(username, password_hash) values(?, ?);", ((request.form.get("username")), hash_pass,))
         conn.close()
         return redirect("/login")
 
@@ -189,7 +189,7 @@ def login():
         conn = sqlite3.connect("cause.db")
         conn.row_factory = dict_factory
         cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE username = ?;", request.form.get("username"))
+        cur.execute("SELECT * FROM users WHERE username = ?;", (request.form.get("username"),))
         rows = cur.fetchall()
         conn.close()
 
@@ -215,7 +215,7 @@ def history():
         conn = sqlite3.connect("cause.db")
         conn.row_factory = dict_factory
         cur = conn.cursor()
-        cur.execute("SELECT date, bad, good, result FROM history WHERE user_id = ?;", session["user_id"])
+        cur.execute("SELECT date, bad, good, result FROM history WHERE user_id = ?;", (session["user_id"]),)
         data = cur.fetchall()
         conn.close()
         return render_template("history.html", datas = data)

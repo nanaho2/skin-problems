@@ -75,7 +75,13 @@ def form():
         conn.row_factory = dict_factory
         cur = conn.cursor()
 
-        cur.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", (session["user_id"], bad, good, results,))
+        # データベースにいれるデータのタイプを直す
+        id = int(session["user_id"])
+        bad = " ".join(bad)
+        good = " ".join(good)
+        results = " ".join(results)
+
+        cur.execute("insert into history(user_id, date, bad, good, result) values(?, CURRENT_TIMESTAMP, ?, ?, ?);", (id, bad, good, results,))
         conn.commit()
         conn.close()
 
@@ -163,12 +169,15 @@ def register():
         rows = cur.fetchall()
 
         if len(rows) == 1:
+            conn.close()
             return render_template("apology.html", error = "入力されたユーザーネームはすでに使用されています")
         
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
+
         if password != confirmation:
-            render_template("apology.html", error = "パスワードが一致しません")
+            conn.close()
+            return render_template("apology.html", error = "パスワードが一致しません")
 
         hash_pass = generate_password_hash(request.form.get("password"))
 
